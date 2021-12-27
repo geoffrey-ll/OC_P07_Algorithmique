@@ -1,6 +1,7 @@
 message_for_commit.txt
 test.py
 requierements.txt
+*.csv
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudio,windows,linux,macos
