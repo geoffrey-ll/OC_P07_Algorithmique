@@ -1,16 +1,13 @@
 from itertools import combinations as itcombinations
-from os import path as osPath
-from os import mkdir as osMkdir
+from os import path as ospath
+from os import mkdir as osmkdir
 from csv import DictReader as csvDictReader
 from csv import DictWriter as csvDictWriter
-from operator import itemgetter as opItemgetter
+from operator import itemgetter as opitemgetter
 
 
-from pprint import pprint as pp
-
-
-# what_file = "actions-5" # Fichier avec les 5 première actions
-what_file = "actions" # Fichier avec les 20 actions
+what_file = "actions-5"  # Fichier avec les 5 première actions
+# what_file = "actions"  # Fichier avec les 20 actions
 
 list_actions = []
 data_actions = {}
@@ -27,7 +24,8 @@ def read_actions_file():
             data_actions[row["Action"]] = {"Cost": row["cost"],
                                            "Profit": row["profit"]}
 
-def find_combinations_possible(list_actions):
+
+def find_combinations_possible():
     combinations = []
     for i in range(len(list_actions) + 1):
         temp = itcombinations(list_actions, i)
@@ -35,7 +33,8 @@ def find_combinations_possible(list_actions):
             combinations.append(elmt)
     return combinations
 
-def cost_profit(list_actions, combination):
+
+def cost_profit(combination):
     result_combination = {}
     cost = 0
     profit = 0
@@ -53,9 +52,11 @@ def cost_profit(list_actions, combination):
 
     return results_combinations.append(result_combination)
 
+
 def create_repo():
-    if osPath.exists("./csv_file") == False:
-        return osMkdir("./csv_file")
+    if ospath.exists("./csv_file") is False:
+        return osmkdir("./csv_file")
+
 
 def write_file(name_file, data):
     print("Writing csv in progress")
@@ -69,21 +70,25 @@ def write_file(name_file, data):
             writer.writerow(result)
     print("Writing csv finished")
 
+
 def excluding_too_expensive_combination():
     maximum = 500
     for result in results_combinations:
         if result["Cost"] <= maximum:
             combinations_no_expensive.append(result)
 
+
 def sorting_results_retain():
     no_expensive_sorted = sorted(combinations_no_expensive,
-                       reverse=True, key=opItemgetter("Profit"))
+                                 reverse=True, key=opitemgetter("Profit"))
     return no_expensive_sorted
 
+
 def get_max_profit(liste):
-    maxi = max(liste, key=opItemgetter("Profit"))
+    maxi = max(liste, key=opitemgetter("Profit"))
     list_of_decision.append(maxi)
     return maxi
+
 
 def excluding_combination_buy(combination_retain, combinations):
     combinations_remaining = []
@@ -104,6 +109,7 @@ def excluding_combination_buy(combination_retain, combinations):
             combinations_remaining.append(combination)
     return combinations_remaining
 
+
 def generate_list_of_decision():
     combinations_remaining = combinations_no_expensive
     while combinations_remaining != []:
@@ -111,12 +117,13 @@ def generate_list_of_decision():
         combinations_remaining = excluding_combination_buy(
             combination_retain, combinations_remaining)
 
+
 def main():
     read_actions_file()
-    combinations = find_combinations_possible(list_actions)
+    combinations = find_combinations_possible()
     print("Calculation cost/profit in progress")
     for combination in combinations:
-        cost_profit(list_actions, combination)
+        cost_profit(combination)
     print("Calculation cost/profit finished")
     create_repo()
 
