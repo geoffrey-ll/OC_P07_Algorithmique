@@ -8,21 +8,27 @@ from operator import itemgetter as op_itemgetter
 
 
 BUDGET = 500
-what_file = "dataset1_Python+P7.csv"
-# what_file = "dataset2_Python+P7.csv"
+file_actions = "dataset1_Python+P7.csv"
+# file_actions = "dataset2_Python+P7.csv"
 
 
-def read_actions_file(file):
+def read_actions_file(file, max_line):
     data_actions = []
+    last_line = int()
     with open(file, newline='') as actionsfile:
         reader = csvDictReader(actionsfile)
         for row in reader:
-            data_actions.append(
-                {"name": row["name"],
-                 "price": float(row["price"]),
-                 "profit": float(float(row["profit"]) / 100)}
-            )
-    return data_actions
+            if max_line == -1 or reader.line_num <= max_line:
+                data_actions.append(
+                    {"name": row["name"],
+                     "price": float(row["price"]),
+                     "profit": float(float(row["profit"]) / 100)}
+                )
+                last_line = reader.line_num
+            if reader.line_num == max_line:
+                break
+    actionsfile.close()
+    return data_actions, last_line
 
 
 def sort_by_profit_rate(data_actions):
@@ -64,8 +70,8 @@ def write_file(data_actions_reform, profit_price_comb_of_best):
                    f"\nProfit: {profit_price_comb_of_best[0]:.2f} {euro}")
 
 
-def main_optimized(file):
-    data_actions = read_actions_file(file)
+def main_optimized(file, max_line=-1):
+    data_actions, line_num = read_actions_file(file, max_line)
     data_sorted = sort_by_profit_rate(data_actions)
     profit_price_comb_of_best = find_best_combination(data_sorted)
     data_actions_reform = {}
@@ -75,6 +81,8 @@ def main_optimized(file):
 
     write_file(data_actions_reform, profit_price_comb_of_best)
 
+    return line_num
+
 
 if __name__ == "__main__":
-    main_optimized(what_file)
+    main_optimized(file_actions)

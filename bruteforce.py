@@ -7,21 +7,27 @@ from os import path as ospath, mkdir as os_mkdir
 from csv import DictReader as csv_DictReader
 
 
+from pprint import pprint
+
+
 BUDGET = 500
 file_actions = "actions.csv"  # Fichier avec les 20 actions
 
 
-def read_actions_file(path, size=-1):
+def read_actions_file(path, max_line):
     data_actions = {}
+    last_line = int()
     with open(path, newline='') as actionsfile:
-        # counter_actions = 0
         reader = csv_DictReader(actionsfile)
-        # with counter_actions <
         for row in reader:
-            data_actions[row["Action"]] = {"Price": row["price"],
-                                           "Profit": float(row["profit"])}
-            # counter_actions += 1
-    return data_actions
+            if max_line == -1 or reader.line_num <= max_line:
+                data_actions[row["Action"]] = {"Price": row["price"],
+                                               "Profit": float(row["profit"])}
+                last_line = reader.line_num
+            if reader.line_num == max_line:
+                break
+    actionsfile.close()
+    return data_actions, last_line
 
 
 def find_combinations_possible(data_actions):
@@ -82,12 +88,14 @@ def write_file(data_actions, data):
                    f"\nProfit: {data['Profit']:.2f} {euro}")
 
 
-def main_bruteforce(path_file_actions, size=-1):
-    data_actions = read_actions_file(path_file_actions, size)
+def main_bruteforce(path_file_actions, max_line=-1):
+    data_actions, line_num = read_actions_file(path_file_actions, max_line)
     print("Searching the most affordable combination")
     best_combination = find_combinations_possible(data_actions)
     write_file(data_actions, best_combination)
     print("Finished")
+
+    return line_num
 
 
 if __name__ == "__main__":
