@@ -64,7 +64,7 @@ def write_file(data_actions_reform, profit_price_comb_of_best):
                    f"\nProfit: {profit_price_comb_of_best[0]:.2f} {euro}")
 
 
-def main(file):
+def main_optimized(file):
     data_actions = read_actions_file(file)
     data_sorted = sort_by_profit_rate(data_actions)
     profit_price_comb_of_best = find_best_combination(data_sorted)
@@ -77,4 +77,4 @@ def main(file):
 
 
 if __name__ == "__main__":
-    main(what_file)
+    main_optimized(what_file)
