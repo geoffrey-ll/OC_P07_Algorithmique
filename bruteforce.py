@@ -14,10 +14,13 @@ file_actions = "actions.csv"  # Fichier avec les 20 actions
 def read_actions_file(path, size=-1):
     data_actions = {}
     with open(path, newline='') as actionsfile:
+        # counter_actions = 0
         reader = csvDictReader(actionsfile)
+        # with counter_actions <
         for row in reader:
             data_actions[row["Action"]] = {"Price": row["price"],
-                                           "Profit": row["profit"]}
+                                           "Profit": float(row["profit"])}
+            # counter_actions += 1
     return data_actions
 
 
@@ -67,14 +70,20 @@ def write_file(data_actions, data):
     with open(path, 'w', newline='', encoding="UTF-8") as file:
 
         file.write("Result of bruteforce.py:\n\n")
+        file.write(f"{'name':^10} {'price':>7} {euro} {'profit':>7} %\n\n")
+
         for action in data["Combination"]:
-            file.write(f"{action} {data_actions[action]['Price']} {euro}\n")
+            file.write(
+                f"{action:<10}"
+                f" {data_actions[action]['Price']:>7} {euro}"
+                f" {data_actions[action]['Profit']:>7.4f} %\n")
+
         file.write(f"\nTotal price: {data['Price']} {euro}"
                    f"\nProfit: {data['Profit']:.2f} {euro}")
 
 
 def main_bruteforce(path_file_actions, size=-1):
-    data_actions = read_actions_file(path_file_actions)
+    data_actions = read_actions_file(path_file_actions, size)
     print("Searching the most affordable combination")
     best_combination = find_combinations_possible(data_actions)
     write_file(data_actions, best_combination)
