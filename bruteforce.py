@@ -2,9 +2,9 @@
 # coding: utf-8
 
 
-from itertools import combinations as itcombinations
-from os import path as ospath, mkdir as osmkdir
-from csv import DictReader as csvDictReader
+from itertools import combinations as it_combinations
+from os import path as ospath, mkdir as os_mkdir
+from csv import DictReader as csv_DictReader
 
 
 BUDGET = 500
@@ -15,7 +15,7 @@ def read_actions_file(path, size=-1):
     data_actions = {}
     with open(path, newline='') as actionsfile:
         # counter_actions = 0
-        reader = csvDictReader(actionsfile)
+        reader = csv_DictReader(actionsfile)
         # with counter_actions <
         for row in reader:
             data_actions[row["Action"]] = {"Price": row["price"],
@@ -27,7 +27,7 @@ def read_actions_file(path, size=-1):
 def find_combinations_possible(data_actions):
     temp_best = {"Profit": 0}
     for i in range(len(data_actions) + 1):
-        temp = itcombinations(data_actions, i)
+        temp = it_combinations(data_actions, i)
         for combination in temp:
             temp_best = \
                 affect_price_profit(data_actions, temp_best, combination)
@@ -65,7 +65,7 @@ def compare_combinations(temp_best, profit_price_comb):
 
 def write_file(data_actions, data):
     if ospath.exists("./results") is False:
-        osmkdir("./results")
+        os_mkdir("./results")
     path, euro = "./results/result_bruteforce.txt", "\u20AC"
     with open(path, 'w', newline='', encoding="UTF-8") as file:
 
