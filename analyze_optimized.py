@@ -3,8 +3,8 @@
 
 
 from sys import argv as sys_argv
+
 from analyzer.analyzer import main_analyzer
-# from optimized import file_actions
 
 
 user_args = sys_argv

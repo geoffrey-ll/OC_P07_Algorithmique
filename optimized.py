@@ -2,15 +2,13 @@
 # coding: utf-8
 
 
+from sys import argv as sys_argv
 from os import path as os_path, mkdir as os_mkdir
 from csv import DictReader as csvDictReader
-from operator import itemgetter as op_itemgetter
-from sys import argv as sys_argv
 
 
 BUDGET = 500
-file_actions = "dataset1_Python+P7.csv"
-# file_actions = "dataset2_Python+P7.csv"
+user_args = sys_argv
 
 
 def read_actions_file(file, max_line):
@@ -34,7 +32,7 @@ def read_actions_file(file, max_line):
 
 def sort_by_profit_rate(data_actions):
     data_sorted = \
-        sorted(data_actions, key=op_itemgetter("profit"), reverse=True)
+        sorted(data_actions, key=lambda x: x["profit"] / x["price"], reverse=True)
     return data_sorted
 
 
@@ -88,7 +86,6 @@ def main_optimized(file, max_line=-1, budget=BUDGET):
     return line_num, for_complexity_memory
 
 
-user_args = sys_argv
 
 if __name__ == "__main__":
     print(user_args)
