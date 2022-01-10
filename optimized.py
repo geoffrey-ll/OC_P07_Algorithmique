@@ -86,9 +86,7 @@ def main_optimized(file, max_line=-1, budget=BUDGET):
     return line_num, for_complexity_memory
 
 
-
 if __name__ == "__main__":
-    print(user_args)
     a_budget = BUDGET
     if len(user_args) == 3:
         a_budget = float(user_args[2])
