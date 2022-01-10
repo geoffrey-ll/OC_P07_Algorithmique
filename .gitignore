@@ -1,6 +1,6 @@
 message_for_commit.txt
 test.py
-
+/results
 *.csv
 
 

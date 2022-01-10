@@ -2,8 +2,12 @@
 # coding: utf-8
 
 
+from sys import argv as sys_argv
 from analyzer.analyzer import main_analyzer
-from optimized import file_actions
+# from optimized import file_actions
 
 
-main_analyzer(file_actions, "optimized")
+user_args = sys_argv
+
+
+main_analyzer(user_args[1], "optimized")

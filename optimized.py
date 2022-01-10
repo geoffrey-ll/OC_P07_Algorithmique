@@ -5,6 +5,7 @@
 from os import path as os_path, mkdir as os_mkdir
 from csv import DictReader as csvDictReader
 from operator import itemgetter as op_itemgetter
+from sys import argv as sys_argv
 
 
 BUDGET = 500
@@ -37,17 +38,18 @@ def sort_by_profit_rate(data_actions):
     return data_sorted
 
 
-def find_best_combination(data_sorted):
+def find_best_combination(data_sorted, budget):
     profit_combination, price_combination, combination = 0, 0, []
     for data_action in data_sorted:
         if data_action["price"] > float(0) \
-                and (price_combination + data_action["price"]) < BUDGET:
+                and (price_combination + data_action["price"]) <= budget:
             price_combination += data_action["price"]
             profit_combination += data_action["profit"] * data_action["price"]
             combination.append(data_action["name"])
 
-    profit_price_comb = [profit_combination, price_combination, combination]
-    return profit_price_comb
+    profit_price_comb_of_best = \
+        [profit_combination, price_combination, combination]
+    return profit_price_comb_of_best
 
 
 def write_file(data_actions_reform, profit_price_comb_of_best):
@@ -70,10 +72,10 @@ def write_file(data_actions_reform, profit_price_comb_of_best):
                    f"\nProfit: {profit_price_comb_of_best[0]:.2f} {euro}")
 
 
-def main_optimized(file, max_line=-1):
+def main_optimized(file, max_line=-1, budget=BUDGET):
     data_actions, line_num = read_actions_file(file, max_line)
     data_sorted = sort_by_profit_rate(data_actions)
-    profit_price_comb_of_best = find_best_combination(data_sorted)
+    profit_price_comb_of_best = find_best_combination(data_sorted, budget)
     data_actions_reform = {}
     for data in data_sorted:
         data_actions_reform[data["name"]] = {"price": data["price"],
@@ -81,8 +83,16 @@ def main_optimized(file, max_line=-1):
 
     write_file(data_actions_reform, profit_price_comb_of_best)
 
-    return line_num
+    for_complexity_memory = [data_actions, data_sorted,
+                             profit_price_comb_of_best, data_actions_reform]
+    return line_num, for_complexity_memory
 
+
+user_args = sys_argv
 
 if __name__ == "__main__":
-    main_optimized(file_actions)
+    print(user_args)
+    a_budget = BUDGET
+    if len(user_args) == 3:
+        a_budget = float(user_args[2])
+    main_optimized(user_args[1], -1, a_budget)

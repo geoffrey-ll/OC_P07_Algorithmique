@@ -7,9 +7,6 @@ from os import path as ospath, mkdir as os_mkdir
 from csv import DictReader as csv_DictReader
 
 
-from pprint import pprint
-
-
 BUDGET = 500
 file_actions = "actions.csv"  # Fichier avec les 20 actions
 
@@ -95,7 +92,8 @@ def main_bruteforce(path_file_actions, max_line=-1):
     write_file(data_actions, best_combination)
     print("Finished")
 
-    return line_num
+    for_complexity_memory = [data_actions, best_combination]
+    return line_num, for_complexity_memory
 
 
 if __name__ == "__main__":
