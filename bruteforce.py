@@ -17,9 +17,10 @@ def read_actions_file(path, max_line):
     with open(path, newline='') as actionsfile:
         reader = csv_DictReader(actionsfile)
         for row in reader:
-            profit = float(float(row["profit"]) / 100)
+            profit = round((float(row["profit"]) / 100), 2)
+            price = round(float(row["price"]), 2)
             if max_line == -1 or reader.line_num <= max_line:
-                data_actions[row["name"]] = {"price": row["price"],
+                data_actions[row["name"]] = {"price": price,
                                              "profit": profit}
                 last_line = reader.line_num
             if reader.line_num == max_line:
@@ -42,8 +43,8 @@ def find_combinations_possible(data_actions, budget):
 def affect_price_profit(data_actions, temp_best, combination, budget):
     profit, price = 0, 0
     for name_action in combination:
-        price_temp = int(data_actions[name_action]["price"])
-        profit_temp = float(data_actions[name_action]["profit"])
+        price_temp = data_actions[name_action]["price"]
+        profit_temp = data_actions[name_action]["profit"]
         price += price_temp
         profit += price_temp * profit_temp
     if profit != 0:
@@ -74,16 +75,16 @@ def write_file(data_actions, data):
     with open(path, 'w', newline='', encoding="UTF-8") as file:
 
         file.write("Result of bruteforce.py:\n\n")
-        file.write(f"{'name':^10} {'price':>7} {euro} {'profit':>7} %\n\n")
+        file.write(f"{'name':^10}{'price':>8} {euro}{'profit':>8} %\n\n")
 
         for action in data["combination"]:
             file.write(
                 f"{action:<10}"
-                f" {data_actions[action]['price']:>7} {euro}"
-                f" {data_actions[action]['profit']:>7.4f} %\n")
+                f"{data_actions[action]['price']:>8.2f} {euro}"
+                f"{data_actions[action]['profit']:>8.4f} %\n")
 
-        file.write(f"\nTotal price: {data['price']} {euro}"
-                   f"\nProfit: {data['profit']:.2f} {euro}")
+        file.write(f"\n{'Total price: ':<13}{data['price']:>8.2f} {euro}"
+                   f"\n{'Profit: ':<13}{data['profit']:>8.2f} {euro}")
 
 
 def main_bruteforce(path_file_actions, max_line=-1, budget=BUDGET):

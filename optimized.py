@@ -4,7 +4,7 @@
 
 from sys import argv as sys_argv
 from os import path as os_path, mkdir as os_mkdir
-from csv import DictReader as csvDictReader
+from csv import DictReader as csv_DictReader
 
 
 BUDGET = 500
@@ -15,14 +15,15 @@ def read_actions_file(file, max_line):
     data_actions = []
     last_line = int()
     with open(file, newline='') as actionsfile:
-        reader = csvDictReader(actionsfile)
+        reader = csv_DictReader(actionsfile)
         for row in reader:
             if max_line == -1 or reader.line_num <= max_line:
-                data_actions.append(
-                    {"name": row["name"],
-                     "price": float(row["price"]),
-                     "profit": float(float(row["profit"]) / 100)}
-                )
+                if float(row["price"]) != 0:
+                    data_actions.append(
+                        {"name": row["name"],
+                         "price": float(row["price"]),
+                         "profit": float(float(row["profit"]) / 100)}
+                    )
                 last_line = reader.line_num
             if reader.line_num == max_line:
                 break
@@ -57,17 +58,20 @@ def write_file(data_actions_reform, profit_price_comb_of_best):
     with open(path, 'w', newline='', encoding="UTF-8") as file:
 
         file.write("Result of optimized.py:\n\n")
-        file.write(f"{'name':^10} {'price':>7} {euro} {'profit':>7} %\n\n")
+        file.write(f"{'name':^10}{'price':>8} {euro}{'profit':>8} %\n\n")
 
         for action in profit_price_comb_of_best[2]:
             file.write(
                 f"{action:<10}"
-                f" {data_actions_reform[action]['price']:>7} {euro}"
-                f" {data_actions_reform[action]['profit']:>7.4f} %\n"
+                f"{data_actions_reform[action]['price']:>8.2f} {euro}"
+                f"{data_actions_reform[action]['profit']:>8.4f} %\n"
             )
 
-        file.write(f"\nTotal price: {profit_price_comb_of_best[1]:.2f} {euro}"
-                   f"\nProfit: {profit_price_comb_of_best[0]:.2f} {euro}")
+        file.write(f"\n{'Total price: ':<13}"
+                   f"{profit_price_comb_of_best[1]:8.2f} {euro}"
+                   
+                   f"\n{'Profit: ':<13}"
+                   f"{profit_price_comb_of_best[0]:8.2f} {euro}")
 
 
 def main_optimized(file, max_line=-1, budget=BUDGET):

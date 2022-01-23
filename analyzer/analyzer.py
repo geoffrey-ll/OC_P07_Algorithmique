@@ -7,12 +7,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
+
 from bruteforce import main_bruteforce
 from optimized import main_optimized
+from knapsack import main_knapsack
 
 
 from pprint import pprint as pprint
-
 
 def perf_of_file(path_file_actions, max_line, who):
     time_start = t_time()
@@ -22,6 +23,9 @@ def perf_of_file(path_file_actions, max_line, who):
     if who == "optimized":
         line_num, for_complexity_memory = \
             main_optimized(path_file_actions, max_line)
+    if who == "knapsack":
+        line_num, for_complexity_memory = \
+            main_knapsack(path_file_actions, max_line)
     time_end = t_time()
     runtime = time_end - time_start
     if runtime == float(0):
@@ -45,6 +49,7 @@ def main_analyzer(path_file_actions, who):
         for variable in for_complexity_memory:
             complexity_memory += variable.__sizeof__()
         print(complexity_memory)
+        # input()
     graph(list(reversed(number_actions)), list(reversed(runtimes)), who)
 
 def graph(number_actions, runtime, who):
@@ -94,11 +99,23 @@ def graph(number_actions, runtime, who):
     if who == "optimized":
         y3 = []
         for i in number_actions:
+            y3.append(i * np.log2(i))
+
+        ax3 =ax1.twinx()
+        color_ref = "yellow"
+        line3 = ax3.plot(number_actions, y3, label="O(nlog(n))", color=color_ref)
+        ax3.axis(False)
+        ax3.grid(False)
+
+
+    if who == "knapsack":
+        y3 = []
+        for i in number_actions:
             y3.append(i)
 
         ax3 =ax1.twinx()
         color_ref = "yellow"
-        line3 = ax3.plot(number_actions, y3, label="O(2^n)", color=color_ref)
+        line3 = ax3.plot(number_actions, y3, label="O(n)", color=color_ref)
         ax3.axis(False)
         ax3.grid(False)
 
