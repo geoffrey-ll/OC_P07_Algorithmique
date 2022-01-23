@@ -11,6 +11,7 @@ from csv import DictReader as csv_DictReader
 BUDGET = 500
 user_args = sys_argv
 
+
 def read_actions_file(path, max_line):
     data_actions = {}
     last_line = int()
@@ -29,18 +30,17 @@ def read_actions_file(path, max_line):
     return data_actions, last_line
 
 
-def find_combinations_possible(data_actions, budget):
+def find_combinations_possible(data_actions):
     temp_best = {"profit": 0}
     for i in range(len(data_actions) + 1):
         temp = it_combinations(data_actions, i)
         for combination in temp:
             temp_best = \
-                affect_price_profit(data_actions, temp_best, combination,
-                                    budget)
+                affect_price_profit(data_actions, temp_best, combination)
     return temp_best
 
 
-def affect_price_profit(data_actions, temp_best, combination, budget):
+def affect_price_profit(data_actions, temp_best, combination):
     profit, price = 0, 0
     for name_action in combination:
         price_temp = data_actions[name_action]["price"]
@@ -48,7 +48,7 @@ def affect_price_profit(data_actions, temp_best, combination, budget):
         price += price_temp
         profit += price_temp * profit_temp
     if profit != 0:
-        if price <= budget and profit >= temp_best["profit"]:
+        if price <= BUDGET and profit >= temp_best["profit"]:
             profit_price_comb = [profit, price, combination]
             temp_best = compare_combinations(temp_best, profit_price_comb)
     return temp_best
@@ -71,10 +71,10 @@ def compare_combinations(temp_best, profit_price_comb):
 def write_file(data_actions, data):
     if ospath.exists("./results") is False:
         os_mkdir("./results")
-    path, euro = "./results/result_bruteforce.txt", "\u20AC"
+    path, euro = "./results/bruteforce_result.txt", "\u20AC"
     with open(path, 'w', newline='', encoding="UTF-8") as file:
 
-        file.write("Result of bruteforce.py:\n\n")
+        file.write("Result of bruteforce:\n\n")
         file.write(f"{'name':^10}{'price':>8} {euro}{'profit':>8} %\n\n")
 
         for action in data["combination"]:
@@ -87,10 +87,10 @@ def write_file(data_actions, data):
                    f"\n{'Profit: ':<13}{data['profit']:>8.2f} {euro}")
 
 
-def main_bruteforce(path_file_actions, max_line=-1, budget=BUDGET):
+def main_bruteforce(path_file_actions, max_line=-1):
     data_actions, line_num = read_actions_file(path_file_actions, max_line)
     print("Searching the most affordable combination")
-    best_combination = find_combinations_possible(data_actions, budget)
+    best_combination = find_combinations_possible(data_actions)
     write_file(data_actions, best_combination)
     print("Finished")
 
@@ -99,7 +99,6 @@ def main_bruteforce(path_file_actions, max_line=-1, budget=BUDGET):
 
 
 if __name__ == "__main__":
-    a_budget = BUDGET
     if len(user_args) == 3:
-        a_budget = float(user_args[2])
-    main_bruteforce(user_args[1], -1, a_budget)
+        BUDGET = int(round(float(user_args[2]), 0))
+    main_bruteforce(user_args[1], -1)
