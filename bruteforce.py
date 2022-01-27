@@ -32,7 +32,7 @@ def read_shares_file(path, max_line):  # max_line pour l'analyse
         reader = csv_DictReader(sharesfile)
         for row in reader:
             if max_line == -1 or reader.line_num <= max_line:
-                data = price, profit, gain = evaluate_data_share(row)
+                data = price, profit, gain = transform_data_share(row)
                 if price <= 0 or profit <= 0 or gain <= 0:
                     continue
                 data_shares[row["name"]] = copy_data_share(data)
@@ -43,7 +43,7 @@ def read_shares_file(path, max_line):  # max_line pour l'analyse
     return data_shares, last_line
 
 
-def evaluate_data_share(row):
+def transform_data_share(row):
     price = round(float(row["price"]), 2)
     profit = round((float(row["profit"]) / 100), 4)
     gain = round(price * profit, 2)
@@ -137,8 +137,8 @@ def main_bruteforce(path_file_shares, max_line=-1):
     print("Finished")
 
     # Pour l'analyse
-    for_complexity_memory = [data_shares, data_best]
-    return line_num, for_complexity_memory
+    vars_to_analyze = [data_shares, data_best]
+    return line_num, vars_to_analyze
 
 
 if __name__ == "__main__":

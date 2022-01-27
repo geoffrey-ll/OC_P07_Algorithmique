@@ -25,7 +25,7 @@ def read_shares_file(path, max_line):  # max_line pour l'analyse
         reader = csv_DictReader(sharesfile)
         for row in reader:
             if max_line == -1 or reader.line_num <= max_line:
-                data = name, price, profit, gain = evaluate_data_share(row)
+                data = name, price, profit, gain = transform_data_share(row)
                 if price <= 0 or profit <= 0 or gain <= 0:
                     continue
                 data_shares.append(copy_data_share(data))
@@ -36,7 +36,7 @@ def read_shares_file(path, max_line):  # max_line pour l'analyse
     return data_shares, last_line
 
 
-def evaluate_data_share(row):
+def transform_data_share(row):
     name = row["name"]
     price = round(float(row["price"]), 2)
     profit = round(float(row["profit"]) / 100, 4)
@@ -110,8 +110,8 @@ def main_optimized(path, max_line=-1):
     write_file_result(data_shares, price_gain_comb_of_best)
 
     # Pour l'analyse
-    for_complexity_memory = [data_shares, price_gain_comb_of_best]
-    return line_num, for_complexity_memory
+    vars_to_analyze = [data_shares, price_gain_comb_of_best]
+    return line_num, vars_to_analyze
 
 
 if __name__ == "__main__":
