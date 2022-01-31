@@ -70,10 +70,10 @@ def find_best_combination(data_sorted):
 def write_file_result(data_shares, price_gain_comb_of_best):
     if os_path.exists("./results") is False:
         os_mkdir("./results")
-    path, euro = "./results/optimized_result.txt", "\u20AC"
+    path, euro = "./results/gourmand_result.txt", "\u20AC"
 
     with open(path, 'w', newline='', encoding="UTF-8") as file:
-        file.write("Result of optimized:\n\n")
+        file.write("Result of gourmand:\n\n")
         file.write(f"{'name':^10}{'price':>8} {euro}{'profit':>8} %\n\n")
 
         for idx_share in price_gain_comb_of_best[2]:
@@ -84,10 +84,10 @@ def write_file_result(data_shares, price_gain_comb_of_best):
             )
 
         file.write(f"\n{'Total price':<11}:"
-                   f"{price_gain_comb_of_best[0]:8.2f} {euro}"
+                   f"{price_gain_comb_of_best[0]:>8.2f} {euro}"
                    
                    f"\n{'Total gain':<11}:"
-                   f"{price_gain_comb_of_best[1]:8.2f} {euro}")
+                   f"{price_gain_comb_of_best[1]:>8.2f} {euro}")
     file.close()
 
 
@@ -97,11 +97,10 @@ def description():
                  "\nOptional parameter:\n"
                  "    Budget (format xx.yy)"
                  "\nExemple:\n"
-                 "    python optimized.py actions.csv 226.35")
+                 "    python gourmand.py shares.csv 226.35")
 
 
-
-def main_optimized(path, max_line=-1):
+def main_gourmand(path, max_line=-1):
     # line_num pour l'analyse
     data_shares, line_num = read_shares_file(path, max_line)
     sort_by_profit_rate(data_shares)
@@ -118,7 +117,7 @@ if __name__ == "__main__":
     try:
         if len(user_args) == 3:
             BUDGET = int(round(float(user_args[2]), 0))
-        main_optimized(user_args[1], -1)
+        main_gourmand(user_args[1], -1)
 
     except IndexError as e:
         print(e)

@@ -9,7 +9,7 @@ import seaborn as sns
 
 
 from bruteforce import main_bruteforce
-from optimized import main_optimized
+from gourmand import main_gourmand
 from knapsack import main_knapsack
 
 
@@ -23,7 +23,7 @@ def performance(path_file_shares, max_line, who, option="none"):
             main_bruteforce(path_file_shares, max_line)
     if who == "optimized":
         line_num, for_complexity_memory = \
-            main_optimized(path_file_shares, max_line)
+            main_gourmand(path_file_shares, max_line)
     if who == "knapsack":
         line_num, for_complexity_memory = \
             main_knapsack(path_file_shares, option, max_line)
@@ -79,7 +79,7 @@ def graph(number_shares, runtimes, who):
     ax1.set_title(f"Complexité de {who}.py", color=color_gen)
 
     # Abscisse
-    ax1.set_xlabel("Nombres d'shares", color=color_gen)
+    ax1.set_xlabel("Nombres de shares", color=color_gen)
     # Pour déterminer les valeurs en abscisse
     if who == "knapsack":
         end_abscissa = number_shares[-1] + 1

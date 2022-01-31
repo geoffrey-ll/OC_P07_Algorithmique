@@ -18,7 +18,7 @@ user_args = sys_argv
 # gain => (prix * profit) en euro
 
 
-def read_actions_file(path, max_line):  # max_line pour l'analyse
+def read_shares_file(path, max_line):  # max_line pour l'analyse
     data_shares = [{"dummy": "dummy"}]
     last_line = int()  # Pour l'analyse
     with open(path, newline='') as sharesfile:
@@ -77,7 +77,7 @@ def top_down(data_shares):
             gain_2 = knapsack_td(remaining_shares - 1, budget -
                                  data_shares[remaining_shares]["price"]) \
                 + data_shares[remaining_shares]["gain"]
-            if gain_2 >= gain_1:
+            if gain_2 > gain_1:
                 gain = gain_2
             else:
                 gain = gain_1
@@ -91,20 +91,20 @@ def bottom_up(data_shares):
     number_shares, cheapest, configurations = preparate_knapsack(data_shares,
                                                                  1)
     for remaining_shares in range(1, number_shares + 1):
+        share_gain = data_shares[remaining_shares]["gain"]
+        share_price = data_shares[remaining_shares]["price"]
         for budget in range(BUDGET + 1):
-            action_gain = data_shares[remaining_shares]["gain"]
-            action_price = data_shares[remaining_shares]["price"]
-            previous_and_no_buy = configurations[remaining_shares - 1][budget]
-            previous_and_buy = configurations[remaining_shares - 1][
-                budget - action_price]
-
             if remaining_shares == 1 or budget < cheapest:
                 current_gain = 0
-            elif action_price > budget:
-                current_gain = previous_and_no_buy
+            elif share_price > budget:
+                current_gain = configurations[remaining_shares - 1][budget]
             else:
+                previous_and_no_buy = \
+                    configurations[remaining_shares - 1][budget]
+                previous_and_buy = \
+                    configurations[remaining_shares - 1][budget - share_price]
                 gain_1 = previous_and_no_buy
-                gain_2 = previous_and_buy + action_gain
+                gain_2 = previous_and_buy + share_gain
                 if gain_2 > gain_1:
                     current_gain = gain_2
                 else:
@@ -120,19 +120,19 @@ def find_shares_buy(data_shares, configurations):
     shares_buy = []
     while remaining_shares >= 1:
         current_gain = configurations[remaining_shares][budget]
-        action_gain = data_shares[remaining_shares]["gain"]
-        action_price = data_shares[remaining_shares]["price"]
+        share_gain = data_shares[remaining_shares]["gain"]
+        share_price = data_shares[remaining_shares]["price"]
         try:
             previous_gain = configurations[remaining_shares - 1][budget -
-                                                                 action_price]
+                                                                 share_price]
         except IndexError:
             previous_gain = 0
 
-        if action_price < budget:
-            if current_gain - action_gain == previous_gain or \
-                    current_gain - action_gain == 0:
+        if share_price <= budget:
+            if current_gain - share_gain == previous_gain or \
+                    current_gain - share_gain == 0:
                 shares_buy.append(remaining_shares)
-                budget -= action_price
+                budget -= share_price
         remaining_shares -= 1
     return shares_buy
 
@@ -168,12 +168,12 @@ def description():
                  "\nOptional parameter:\n"
                  "    Budget (format xx.yy)"
                  "\nExemple:\n"
-                 "    python knapsack.py actions.csv bu 226.35")
+                 "    python knapsack.py shares.csv bu 226.35")
 
 
-def main_knapsack(path_file_action, option, max_line=-1):
+def main_knapsack(path_file_share, option, max_line=-1):
     print("start")
-    data_shares, line_num = read_actions_file(path_file_action, max_line)
+    data_shares, line_num = read_shares_file(path_file_share, max_line)
 
     if option == "bu":
         result, configurations, name_def = bottom_up(data_shares)
