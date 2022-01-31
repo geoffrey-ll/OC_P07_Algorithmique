@@ -10,4 +10,4 @@ from analyzer.analyzer import main_analyzer
 user_args = sys_argv
 
 
-main_analyzer(user_args[1], "optimized")
+main_analyzer(user_args[1], "gourmand")

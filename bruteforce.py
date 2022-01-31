@@ -20,6 +20,18 @@ user_args = sys_argv
 
 
 def read_shares_file(path, max_line):  # max_line pour l'analyse
+    """
+        Lit le .csv contenant les données des actions.
+
+    :param path: Chemin relatif du .csv des actions à lire.
+    :param max_line: Valeur de la dernière ligne du .csv à lire
+        (utile pour l'analyzer)
+
+    :return:
+        :data_shares: Les données des actions transformées et prêtes à être
+            utilisées
+        :last_line: La dernière ligne lue du .csv.
+    """
     data_shares = []
     last_line = int()  # Pour l'analyse
     with open(path, newline='') as sharesfile:
@@ -38,6 +50,14 @@ def read_shares_file(path, max_line):  # max_line pour l'analyse
 
 
 def transform_data_share(row):
+    """
+        Transforme les données de la ligne du .csv aux formats voulus.
+
+    :param row: Le contenu d'une ligne du .csv.
+
+    :return:
+        :name, price, profit, gain: Les données transformées de la ligne.
+    """
     name = row["name"]
     price = round(float(row["price"]), 2)
     profit = round((float(row["profit"]) / 100), 4)
@@ -46,12 +66,22 @@ def transform_data_share(row):
 
 
 def copy_data_share(data):
+    """Copie les données transformées des actions en mémoire cache."""
     data_share = \
         {"name": data[0], "price": data[1], "profit": data[2], "gain": data[3]}
     return data_share
 
 
 def find_combinations_possible(data_shares):
+    """
+       Itère sur toutes les combinaisons possibles.
+
+    :param data_shares: Données des actions.
+
+    :return:
+        :price_gain_comb_of_best: liste contenant le prix, le gain et la
+            combinaison de celle qui est la plus rentable.
+    """
     price_gain_comb_of_best = [0, 0, []]
     for i in range(len(data_shares) + 1):
         temp = it_combinations(range(len(data_shares)), i)
@@ -65,6 +95,18 @@ def find_combinations_possible(data_shares):
 
 
 def affect_price_gain(data_shares, price_gain_comb_of_best, combination):
+    """
+        Détermine le coût et le gain d'une combinaison.
+
+    :param data_shares: Données des actions
+    :param price_gain_comb_of_best: liste contenant le prix, le gain et la
+            combinaison de celle qui est la plus rentable.
+    :param combination: Combinaison en cours d'évaluation.
+
+    :return:
+        :price_gain_comb_of_best: liste contenant le prix, le gain et la
+            combinaison de celle qui est la plus rentable.
+    """
     price_comb, gain_comb = 0, 0
     for idx_share in combination:
         price_comb += data_shares[idx_share]["price"]
@@ -77,6 +119,19 @@ def affect_price_gain(data_shares, price_gain_comb_of_best, combination):
 
 
 def compare_combinations(price_gain_comb_of_best, price_gain_comb_temp):
+    """
+        Compare la meilleure combinaison en mémoire avec celle en cours
+        d'évaluation.
+
+    :param price_gain_comb_of_best: liste contenant le prix, le gain et la
+            combinaison de celle qui est la plus rentable.
+    :param price_gain_comb_temp:  liste contenant le prix, le gain et la
+            combinaison de celle en cours d'évaluation.
+
+    :return:
+        :price_gain_comb_of_best: liste contenant le prix, le gain et la
+            combinaison de celle qui est la plus rentable.
+    """
     if price_gain_comb_temp[1] == price_gain_comb_of_best[1] \
             and price_gain_comb_temp[0] > price_gain_comb_of_best[0]:
         return price_gain_comb_of_best
@@ -85,6 +140,19 @@ def compare_combinations(price_gain_comb_of_best, price_gain_comb_temp):
 
 
 def change_temp_comb(price_gain_comb_of_best, price_gain_comb_temp):
+    """
+        Modifie les valeurs de l'ancienne meilleur combinaison, par celles de
+        la nouvelle meilleure combinaison.
+
+    :param price_gain_comb_of_best: liste contenant le prix, le gain et la
+            combinaison de l'ancienne plus rentable combinaison.
+    :param price_gain_comb_temp:  liste contenant le prix, le gain et la
+            combinaison de celle en cours d'évaluation.
+
+    :return:
+        :price_gain_comb_of_best: liste contenant le prix, le gain et la
+            combinaison de la nouvelle plus rentable combinaison.
+    """
     price_gain_comb_of_best[0] = price_gain_comb_temp[0]
     price_gain_comb_of_best[1] = price_gain_comb_temp[1]
     price_gain_comb_of_best[2] = price_gain_comb_temp[2]
@@ -92,6 +160,7 @@ def change_temp_comb(price_gain_comb_of_best, price_gain_comb_temp):
 
 
 def write_file_result(data_shares, price_gain_comb_of_best):
+    """Écrit le résultat obtenu dans un fichier .txt."""
     if os_path.exists("./results") is False:
         os_mkdir("./results")
     path, euro = "./results/bruteforce_result.txt", "\u20AC"
@@ -115,6 +184,7 @@ def write_file_result(data_shares, price_gain_comb_of_best):
 
 
 def description():
+    """Description des paramètres requis et optionnels pour le script."""
     return print("\nRequiered parameter:\n"
                  "    Shares file (format csv)"
                  "\nOptional parameter:\n"
@@ -124,6 +194,17 @@ def description():
 
 
 def main_bruteforce(path_file_shares, max_line=-1):
+    """
+        Le main de bruteforce.py.
+
+    :param path_file_shares:
+        Correspond à l'argument[1] donné par l'utilisateur.
+    :param max_line: Pour l'analyzer.
+
+    :return: Sont là uniquement pour l'analyzer.
+        :line_num: Numéro de la dernière ligne lue du .csv.
+        :vars_to_analyze: Variable à peser pour la complexité spatiale.
+    """
     # line_num pour l'analyse
     data_shares, line_num = read_shares_file(path_file_shares, max_line)
     print("Searching the most affordable combination")

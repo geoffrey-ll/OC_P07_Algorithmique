@@ -19,6 +19,18 @@ user_args = sys_argv
 
 
 def read_shares_file(path, max_line):  # max_line pour l'analyse
+    """
+        Lit le .csv contenant les données des actions.
+
+    :param path: Chemin relatif du .csv des actions à lire.
+    :param max_line: Valeur de la dernière ligne du .csv à lire
+        (utile pour l'analyzer)
+
+    :return:
+        :data_shares: Les données des actions transformées et prêtes à être
+            utilisées
+        :last_line: La dernière ligne lue du .csv.
+    """
     data_shares = [{"dummy": "dummy"}]
     last_line = int()  # Pour l'analyse
     with open(path, newline='') as sharesfile:
@@ -37,6 +49,14 @@ def read_shares_file(path, max_line):  # max_line pour l'analyse
 
 
 def transform_data_share(row):
+    """
+        Transforme les données de la ligne du .csv aux formats voulus.
+
+    :param row: Le contenu d'une ligne du .csv.
+
+    :return:
+        :name, price, profit, gain: Les données transformées de la ligne.
+    """
     name = row["name"]
     price = int(round(float(row["price"]) * 100, 0))
     profit = round(float(row["profit"]) / 100, 4)
@@ -45,12 +65,26 @@ def transform_data_share(row):
 
 
 def copy_data_share(data):
+    """Copie les données transformées des actions en mémoire cache."""
     data_share = \
         {"name": data[0], "price": data[1], "profit": data[2], "gain": data[3]}
     return data_share
 
 
 def preparate_knapsack(data_shares, x=0):
+    """
+        Mets en place les élèments nécessaires et communs pour les deux
+        versions de knapsack, dont la matrice initialisé.
+
+    :param data_shares: Données des actions.
+    :param x: Pour avoir la matrice à la bonne taille selon l'appel depuis
+        top_down ou bottom_up.
+
+    :return:
+        :number_shares: Nombres d'actions exploitables.
+        :cheapest: Coût de l'action la moins chère.
+        :configurations: Matrice initialisé pour débuter le knapsack.
+    """
     number_shares = len(data_shares) - 1
     cheapest = min([data["price"] for data in data_shares[1:]])
     configurations = [
@@ -60,10 +94,31 @@ def preparate_knapsack(data_shares, x=0):
 
 
 def top_down(data_shares):
+    """
+        Le 'main' de la version top-down.
+
+    :param data_shares: Données des actions.
+
+    :return:
+        :knapsack(): Le gain de la meilleur configuration.
+        :configurations: La matrice des configurations.
+        :__name__. Le nom de la fonction. Utile lors de l'écriture du résultat.
+    """
     number_shares, cheapest, configurations = preparate_knapsack(data_shares)
     configurations.insert(0, [0])
 
     def knapsack_td(remaining_shares, budget):
+        """
+            La fonction récursive pour la version top-down du knapsack.
+
+        :param remaining_shares: Le nombre d'actions restantes pour la
+            récursivité en cours.
+        :param budget: Le budget restant pour la récursivité en cours.
+
+        :return:
+            :configurations[remaining_shares][budget]: Le gain associé à la
+                config en cours.
+        """
         if remaining_shares != 0 and\
                 configurations[remaining_shares][budget] != -1:
             return configurations[remaining_shares][budget]
@@ -88,6 +143,16 @@ def top_down(data_shares):
 
 
 def bottom_up(data_shares):
+    """
+        La version bottom-up du knapsack.
+
+    :param data_shares: Données des actions.
+
+    :return:
+        :configurations[-1][-1]: Le gain de la meilleur configuration.
+        :configurations: La matrice des configurations.
+        :__name__: Le nom de la fonction. Utile lors de l'écriture du résultat.
+    """
     number_shares, cheapest, configurations = preparate_knapsack(data_shares,
                                                                  1)
     for remaining_shares in range(1, number_shares + 1):
@@ -115,6 +180,17 @@ def bottom_up(data_shares):
 
 
 def find_shares_buy(data_shares, configurations):
+    """
+        En parcourant la matrice des configurations, trouve les index des
+        actions qui sont utilisées pour la combinaison la plus rentable.
+
+    :param data_shares: Données des actions.
+    :param configurations: Matrice des configurations.
+
+    :return:
+        :shares_buy: Index des actions constituant la combinaison la plus
+            rentable.
+    """
     budget = BUDGET
     remaining_shares = len(data_shares) - 1
     shares_buy = []
@@ -138,6 +214,7 @@ def find_shares_buy(data_shares, configurations):
 
 
 def write_file_result(data_shares, shares_buy, gain_best, name_def):
+    """Écrit le résultat obtenu dans un fichier .txt."""
     if os_path.exists("./results") is False:
         os_mkdir("./results")
     path, euro = f"./results/{name_def}_result.txt", "\u20AC"
@@ -160,6 +237,7 @@ def write_file_result(data_shares, shares_buy, gain_best, name_def):
 
 
 def description():
+    """Description des paramètres requis et optionnels pour le script."""
     return print("\nRequiered parameter:\n"
                  "    Shares file (format csv)\n"
                  "    Option:\n"
@@ -171,9 +249,23 @@ def description():
                  "    python knapsack.py shares.csv bu 226.35")
 
 
-def main_knapsack(path_file_share, option, max_line=-1):
+def main_knapsack(path_file_shares, option, max_line=-1):
+    """
+        Le main de knapsack.py.
+
+    :param path_file_shares:
+        Correspond à l'argument[1] donné par l'utilisateur.
+    :param option: Pour indiquer s'il faut utiliser top_down ou bottom_up.
+        Correspond à l'argument[2] donnée par l'utilisateur.
+    :param max_line: Pour l'analyzer.
+
+    :return: Sont là uniquement pour l'analyzer.
+        :line_num: Numéro de la dernière ligne lue du .csv.
+        :vars_to_analyze: Variable à peser pour la complexité spatiale.
+    """
+    # line_num pour l'analyse
     print("start")
-    data_shares, line_num = read_shares_file(path_file_share, max_line)
+    data_shares, line_num = read_shares_file(path_file_shares, max_line)
 
     if option == "bu":
         result, configurations, name_def = bottom_up(data_shares)

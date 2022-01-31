@@ -17,11 +17,29 @@ complexity_memory = 0
 
 
 def performance(path_file_shares, max_line, who, option="none"):
+    """
+        Exécute le script à analyser en le chronomètrant et en récupérant les
+        variables à peser.
+
+    :param path_file_shares: Le chemin relative du .csv à lire.
+    :param max_line: Ligne maximale à lire dans le .csv. -1 correspond à une
+        lecture complète.
+    :param who: Pour identifier l'appelant.
+    :param option: Lorsque l'appelant est analyze_knapsack.py, définit s'il
+        faut utiliser top_down ou bottom_up. Correspond à l'argument[2] donné
+        par l'utilisateur.
+
+    :return:
+        :runtime: La durée d'éxécution du script, de la lecture du .csv, à
+            l'écriture du résultat dans le .txt.
+        :line_num: Dernière ligne du .csv lu.
+        :for_complexity_memory: Les variables du script qu'ils faut peser.
+    """
     time_start = t_time()
     if who == "bruteforce":
         line_num, for_complexity_memory = \
             main_bruteforce(path_file_shares, max_line)
-    if who == "optimized":
+    if who == "gourmand":
         line_num, for_complexity_memory = \
             main_gourmand(path_file_shares, max_line)
     if who == "knapsack":
@@ -37,6 +55,12 @@ def performance(path_file_shares, max_line, who, option="none"):
 
 
 def calculate_spatial_complexity(variable_to_analyze):
+    """
+        Calcul le poids total de tous les élèments de toutes les variables à
+        peser.
+
+    :param variable_to_analyze: Variables à peser.
+    """
     global complexity_memory
     for elmt in variable_to_analyze:
         try:
@@ -66,6 +90,20 @@ def calculate_spatial_complexity(variable_to_analyze):
 
 
 def graph(number_shares, runtimes, who):
+    """
+        Un graphique de la complexité temporelle lorsque appelé par
+        analyze_bruteforce.py ou analyze_knapsack.py.
+
+    :param number_shares: Liste du nombres d'actions utilisée pour chaque
+        itération de l'analyse.
+    :param runtimes: Liste de la durée du script pour chaque itération de
+        l'analyse.
+    :param who: Définit qui est l'appelant parmis : analyze_bruteforce.py,
+        analyze_gourmand.py et analyze_knapsack.py.
+
+    :return:
+        Un graphique matplotlib.
+    """
     sns.set_style("darkgrid",
                   {"axes.facecolor": "#282722",
                    "grid.color": "gray",
@@ -119,10 +157,22 @@ def graph(number_shares, runtimes, who):
         ax3.axis(False)
         ax3.grid(False)
 
-    plt.show()
+    return plt.show()
 
 
-def data_optimized(number_shares, runtimes):
+def data_for_gourmand(number_shares, runtimes):
+    """
+        Écrit un fichier .txt lorsque appelé depuis analyze_gourmand.py,
+        contenant les données nécessaires pour faire un graph via excel, car
+        je ne maîtrise pas les échelles logarithmiques avec matplotlib.
+
+    :param number_shares: Liste du nombres d'actions utilisée pour chaque
+        itération de l'analyse.
+    :param runtimes: Liste de la durée du script pour chaque itération de
+        l'analyse.
+
+
+    """
     if os_path.exists("./analyzer") is False:
         os_mkdir("./analyzer")
     path = "./analyzer/data_for_opti_graph_log.txt"
@@ -136,10 +186,22 @@ def data_optimized(number_shares, runtimes):
         for i in range(len(runtimes) - 1):
             file.write(f"{number_shares[i]:0>3};"
                        f"0,{str(runtimes[i])[2:]:0<19}\n")
-    file.close()
+    return file.close()
 
 
 def main_analyzer(path_file_shares, who, option="none"):
+    """
+        Le main de analyzer.py.
+
+    :param path_file_shares: Correspond à l'argument[1] donné par
+        l'utilisateur.
+    :param who: Pour identifier l'appelant
+    :param option: Lorsque l'appelant est analyze_knapsack.py, définit s'il
+        faut utiliser top_down ou bottom_up. Correspond à l'argument[2] donné
+        par l'utilisateur.
+
+    :return: La complexité spatial via un print dans le terminal.
+    """
     number_shares, runtimes, size = [], [], 0
     max_line, step_kns, count_iteration_kns = -1, 0, 1
 
@@ -172,9 +234,9 @@ def main_analyzer(path_file_shares, who, option="none"):
     number_shares_reverse = list(reversed(number_shares))
     runtimes_reverse = list(reversed(runtimes))
 
-    if who == "optimized":
-        data_optimized(number_shares_reverse, runtimes_reverse)
+    if who == "gourmand":
+        data_for_gourmand(number_shares_reverse, runtimes_reverse)
     else:
         graph(number_shares_reverse, runtimes_reverse, who)
 
-    print(f"\nSpatial complexity for entire file: {size:,} octet")
+    return print(f"\nSpatial complexity for entire file: {size:,} octet")

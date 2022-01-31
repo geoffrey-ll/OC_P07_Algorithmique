@@ -19,6 +19,18 @@ user_args = sys_argv
 
 
 def read_shares_file(path, max_line):  # max_line pour l'analyse
+    """
+        Lit le .csv contenant les données des actions.
+
+    :param path: Chemin relatif du .csv des actions à lire.
+    :param max_line: Valeur de la dernière ligne du .csv à lire
+        (utile pour l'analyzer)
+
+    :return:
+        :data_shares: Les données des actions transformées et prêtes à être
+            utilisées.
+        :last_line: La dernière ligne lue du .csv.
+    """
     data_shares = []
     last_line = int()  # last_line pour l'analyse
     with open(path, newline='') as sharesfile:
@@ -37,6 +49,14 @@ def read_shares_file(path, max_line):  # max_line pour l'analyse
 
 
 def transform_data_share(row):
+    """
+        Transforme les données de la ligne du .csv aux formats voulus.
+
+    :param row: Le contenu d'une ligne du .csv.
+
+    :return:
+        :name, price, profit, gain: Les données transformées de la ligne.
+    """
     name = row["name"]
     price = round(float(row["price"]), 2)
     profit = round(float(row["profit"]) / 100, 4)
@@ -45,16 +65,25 @@ def transform_data_share(row):
 
 
 def copy_data_share(data):
+    """Copie les données transformées des actions en mémoire cache."""
     data_share = \
         {"name": data[0], "price": data[1], "profit": data[2], "gain": data[3]}
     return data_share
 
 
 def sort_by_profit_rate(data_shares):
+    """Trie les données des actions par profit décroissant."""
     return data_shares.sort(key=lambda x: x["profit"], reverse=True)
 
 
 def find_best_combination(data_sorted):
+    """
+        Construit la meilleur combinaison en parcourant les actions par profit
+        décroissant.
+
+    :param data_sorted: Données des actions ordonnées par profit décroissant.
+    :return:
+    """
     price_comb, gain_comb, comb = 0, 0, []
     for data_share in data_sorted:
         price_temp = price_comb + data_share["price"]
@@ -68,6 +97,7 @@ def find_best_combination(data_sorted):
 
 
 def write_file_result(data_shares, price_gain_comb_of_best):
+    """Écrit le résultat obtenu dans un fichier .txt."""
     if os_path.exists("./results") is False:
         os_mkdir("./results")
     path, euro = "./results/gourmand_result.txt", "\u20AC"
@@ -92,6 +122,7 @@ def write_file_result(data_shares, price_gain_comb_of_best):
 
 
 def description():
+    """Description des paramètres requis et optionnels pour le script."""
     return print("\nRequiered parameter:\n"
                  "    Shares file (format csv)"
                  "\nOptional parameter:\n"
@@ -100,9 +131,20 @@ def description():
                  "    python gourmand.py shares.csv 226.35")
 
 
-def main_gourmand(path, max_line=-1):
+def main_gourmand(path_file_shares, max_line=-1):
+    """
+        Le main de gourmand.py.
+
+    :param path_file_shares:
+        Correspond à l'argument[1] donné par l'utilisateur.
+    :param max_line: Pour l'analyzer.
+
+    :return: Sont là uniquement pour l'analyzer.
+        :line_num: Numéro de la dernière ligne lue du .csv.
+        :vars_to_analyze: Variable à peser pour la complexité spatiale.
+    """
     # line_num pour l'analyse
-    data_shares, line_num = read_shares_file(path, max_line)
+    data_shares, line_num = read_shares_file(path_file_shares, max_line)
     sort_by_profit_rate(data_shares)
     price_gain_comb_of_best = find_best_combination(data_shares)
 
