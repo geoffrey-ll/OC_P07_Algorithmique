@@ -93,7 +93,7 @@ def write_file_result(data_shares, price_gain_comb_of_best, name_def):
             file.write(
                 f"{data_shares[idx_share]['name']:<10}"
                 f"{data_shares[idx_share]['price'] / x:>8.2f} {euro}"
-                f"{data_shares[idx_share]['profit']:>8.4f} %\n")
+                f"{data_shares[idx_share]['profit']:>8.4f}\n")
 
         file.write(f"\n{'Total price':<11}:"
                    f"{price_gain_comb_of_best[0] / x:>8.2f} {euro}"
@@ -114,7 +114,7 @@ def write_headers(kns, name_def, euro):
         header_1 = f"Result of knapsack : {name_def.replace('_', '-')}\n\n:"
     else:
         header_1 = f"Result of {name_def}:\n\n"
-    header_2 = f"{'name':^10}{'price':>8} {euro}{'profit':>8} %\n\n"
+    header_2 = f"{'name':^10}{'price':>8} {euro}{'profit':>8}\n\n"
     return header_1 + header_2
 
 
