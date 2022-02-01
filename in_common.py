@@ -121,10 +121,12 @@ def write_headers(kns, name_def, euro):
 def description(calling_script):
     """Description des paramètres requis et optionnels pour le script."""
     second_requiered_parameter = ''
+    option = ''
     if calling_script == "knapsack.py":
         second_requiered_parameter = f"\n{' '*4}Option:\n"\
                                      f"{' '*8}bu => for bottom-up\n"\
                                      f"{' '*8}td => for top-down"
+        option = " bu"
 
     return print("\nRequiered parameter:\n"
                  "    Shares file (format csv)"
@@ -132,4 +134,4 @@ def description(calling_script):
                  "\nOptional parameter:\n"
                  "    Budget (format xx.yy)"
                  "\nExemple:\n"
-                 f"    python {calling_script} shares.csv 226.35")
+                 f"    python {calling_script} shares.csv{option} 226.35")
