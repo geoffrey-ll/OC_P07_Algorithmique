@@ -46,7 +46,7 @@ Construit la combinaison en y ajoutant succesivement les actions au profit le
 plus grand (quand le budget restant le permet).\
 L'ordonnance des actions est faite par le script.
 
-\
+L'approche knapsack :\
 Le script évalue le plus intéressant entre, acheter une action et ne pas l'acheter.\
 Utilise une matrice pour éviter de recalculer ce qui l'à déjà été.
 -   **Version - Top-Down :**\
