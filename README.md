@@ -41,12 +41,12 @@ La solution est écrite dans un fichier .txt placé dans le dossier => `./result
 Consiste à essayer toutes les combinaisons possibles (hors simple permutations),
 avant d'en dégager celle au gain maximal.
 
-**L'approche grourmand (ou greedy) :**\
+__L'approche grourmand (ou greedy)__ :\
 Construit la combinaison en y ajoutant succesivement les actions au profit le 
 plus grand (quand le budget restant le permet).\
 L'ordonnance des actions est faite par le script.
 
-**L'approche knapsack :**\
+\
 Le script évalue le plus intéressant entre, acheter une action et ne pas l'acheter.\
 Utilise une matrice pour éviter de recalculer ce qui l'à déjà été.
 -   **Version - Top-Down :**\
