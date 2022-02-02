@@ -103,6 +103,15 @@ def write_file_result(data_shares, price_gain_comb_of_best, name_def):
 
 
 def from_kns_or_not(name_def):
+    """
+        Pour la transformation du format centime utilisé avec kns, en format
+        euro,centime. EX : 49995 en 499,99.
+
+    :param name_def: Pour identifier l'appel depuis knapsack.py.
+
+    :return:
+        bolééen et valeur de x pour la transformation.
+    """
     if name_def == "bottom_up" or name_def == "top_down":
         return True, 100
     else:
@@ -110,6 +119,7 @@ def from_kns_or_not(name_def):
 
 
 def write_headers(kns, name_def, euro):
+    """Définit les deux premières lignes du fichier."""
     if kns is True:
         header_1 = f"Result of knapsack : {name_def.replace('_', '-')}\n\n:"
     else:

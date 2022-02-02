@@ -61,7 +61,7 @@ def main_gourmand(path_file_shares, max_line=-1):
 
     :return: Sont là uniquement pour l'analyzer.
         :line_num: Numéro de la dernière ligne lue du .csv.
-        :vars_to_analyze: Variable à peser pour la complexité spatiale.
+        :vars_to_analyze: Variables à peser pour la complexité spatiale.
     """
     # line_num pour l'analyse
     data_shares, line_num = read_shares_file(path_file_shares, max_line)

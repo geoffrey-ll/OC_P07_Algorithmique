@@ -175,7 +175,7 @@ def main_knapsack(path_file_shares, option, max_line=-1):
 
     :return: Sont là uniquement pour l'analyzer.
         :line_num: Numéro de la dernière ligne lue du .csv.
-        :vars_to_analyze: Variable à peser pour la complexité spatiale.
+        :vars_to_analyze: Variables à peser pour la complexité spatiale.
     """
     print("start")
     # line_num pour l'analyse
